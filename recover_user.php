@@ -26,7 +26,7 @@ if (isset($_POST) && isset($_POST['email']) ) {
   
   $conn->close();
   echo '<script>alert("Se ha enviado una contraseña de acceso a tu email")</script>';
-  echo "<script>setTimeout(\"location.href = 'recover_account.php';\",100)</script>";
+  echo "<script>setTimeout(\"location.href = '/';\",100)</script>";
   exit;
 }
 
