@@ -282,7 +282,7 @@
                     </div>
                 
 
-                  <p><a href="#">Se te olvidó tu contraseña?</a></p>
+                  <p><a href="recover_account.php">Se te olvidó tu contraseña?</a></p>
                   <button class="btn btn-primary" type="submit" name="login">Inicia sesión ahora</button>
                 </form><!--Login Form Ends--> 
 
