@@ -1,11 +1,13 @@
 <?php
 include_once 'db.php';
 include_once 'token.php';
+include_once 'mail.php';
 if (isset($_POST) && isset($_POST['email'])) {
   $email = $_POST['email'];
-  $sql = "SELECT id FROM user_registration WHERE email = '" . $email . "'";
+  $sql = "SELECT id, full_name FROM user_registration WHERE email = '" . $email . "'";
   $result = $conn->query($sql);
-  $id = $result->fetch_assoc()['id'];
+  $user = $result->fetch_assoc();
+
   if (!$result->num_rows) {
     $conn->close();
     echo '<script>alert("Cuenta no encontrada")</script>';
@@ -13,9 +15,9 @@ if (isset($_POST) && isset($_POST['email'])) {
     return;
   }
 
-  $token = generateToken($id);
-  $date = date("Y-m-d H:i:s", strtotime("+1 hour"));
-  $setToken = "UPDATE user_registration SET token = '" . $token . "', tkn_expired = '" . $date . "' WHERE id = " . $id;
+  $token = generateToken($user['id']);
+  $date = date("Y-m-d H:i:s", strtotime("+12 hour"));
+  $setToken = "UPDATE user_registration SET token = '" . $token . "', tkn_expired = '" . $date . "' WHERE id = " . $user['id'];
   $update = $conn->query($setToken);
   if (!$conn->affected_rows) {
     echo '<script>alert("Solicitud fallida, intente más tarde")</script>';
@@ -23,7 +25,6 @@ if (isset($_POST) && isset($_POST['email'])) {
   }
 
   $conn->close();
-  echo '<script>alert("Se ha enviado una contraseña de acceso a tu email")</script>';
-  echo "<script>setTimeout(\"location.href = '/';\",100)</script>";
+  sendEmail($email, $token, $user['full_name']);
   exit;
 }
