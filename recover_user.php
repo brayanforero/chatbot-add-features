@@ -1,9 +1,9 @@
 <?php
 include_once 'db.php';
-if (isset($_POST) && isset($_POST['email']) ) {
+include_once 'token.php';
+if (isset($_POST) && isset($_POST['email'])) {
   $email = $_POST['email'];
-  $newPassword = "";
-  $sql = "SELECT id FROM user_registration WHERE email = '".$email."'";
+  $sql = "SELECT id FROM user_registration WHERE email = '" . $email . "'";
   $result = $conn->query($sql);
   $id = $result->fetch_assoc()['id'];
   if (!$result->num_rows) {
@@ -12,21 +12,18 @@ if (isset($_POST) && isset($_POST['email']) ) {
     echo "<script>setTimeout(\"location.href = 'recover_account.php';\",100)</script>";
     return;
   }
-  
-  for ($i=0; $i < 8; $i++) { 
-    $newPassword .= rand(0, 9);
-  }
 
-  $setPass = "UPDATE user_registration SET password = '". $newPassword."' WHERE id = " . $id;
-  $update = $conn->query($setPass);
+  $token = generateToken($id);
+  $date = date("Y-m-d H:i:s", strtotime("+1 hour"));
+  $setToken = "UPDATE user_registration SET token = '" . $token . "', tkn_expired = '" . $date . "' WHERE id = " . $id;
+  $update = $conn->query($setToken);
   if (!$conn->affected_rows) {
     echo '<script>alert("Solicitud fallida, intente más tarde")</script>';
-    echo "<script>setTimeout(\"location.href = 'recover_account.php';\",100)</script>";  
+    echo "<script>setTimeout(\"location.href = 'recover_account.php';\",100)</script>";
   }
-  
+
   $conn->close();
   echo '<script>alert("Se ha enviado una contraseña de acceso a tu email")</script>';
   echo "<script>setTimeout(\"location.href = '/';\",100)</script>";
   exit;
 }
-

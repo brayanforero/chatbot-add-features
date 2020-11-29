@@ -2,3 +2,5 @@ nbproject
 *.jpg
 *.jpeg
 *.png
+composer.phar
+vendor
